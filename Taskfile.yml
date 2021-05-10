@@ -1,0 +1,37 @@
+---
+# yamllint disable rule:line-length
+version: '3'
+
+tasks:
+  build:
+    desc: Creates a cross platform binary
+    cmds:
+      - pyinstaller cli.py -y
+        --onefile
+        --name borg-exporter
+
+  release:
+    desc: Creates a Github release
+    deps: [build-binary]
+    cmds:
+      - git tag --delete latest
+      - git tag -a latest -m 'Latest build'
+      - >
+        github-release delete
+        --user danihodovic
+        --repo borg-exporter
+        --tag latest
+      - >
+        github-release release
+        --user danihodovic
+        --repo borg-exporter
+        --tag latest
+        --name borg-exporter
+        --description "Borg exporter for Prometheus"
+      - >
+        github-release upload
+        --user danihodovic
+        --repo borg-exporter
+        --tag latest
+        --name borg-exporter
+        --file ./dist/borg-exporter

@@ -1,0 +1,74 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+volumes:
+  - name: cache
+    host:
+      path: /tmp/drone-cache
+
+workspace:
+  path: /drone/dht/
+
+steps:
+  - name: restore-cache
+    image: meltwater/drone-cache:dev
+    pull: true
+    settings:
+      backend: "filesystem"
+      restore: true
+      cache_key: '{{ .Repo.Name }}_{{ checksum "poetry.lock" }}'
+      archive_format: "gzip"
+      mount:
+        - '.virtualenv'
+    volumes:
+      - name: cache
+        path: /tmp/cache
+
+  - name: install-dependencies
+    depends_on: [restore-cache]
+    image: python:3.9.1
+    commands:
+      # If the venv dir is not cached create it
+      - '[ ! -d ".virualenv" ] && python -m venv .virtualenv'
+      - . .virtualenv/bin/activate
+      - pip install poetry
+      - poetry install
+
+  - name: install-borg
+    image: python:3.9.1
+    commands:
+      - curl https://github.com/gruntwork-io/fetch/releases/download/v0.4.2/fetch_linux_amd64 -o ./fetch -L
+      - chmod +x ./fetch
+      - ./fetch --repo https://github.com/borgbackup/borg --release-asset="borg-linux64" --tag=1.1.16 /tmp
+      - ./fetch --repo https://github.com/danihodovic/borgmatic-binary --release-asset='borgmatic' --tag 1.5.13 /tmp
+      - mv /tmp/borg-linux64 borg
+      - mv /tmp/borgmatic borgmatic
+      - chmod +x borg borgmatic
+
+  - name: test
+    depends_on: [install-dependencies, install-borg]
+    image: python:3.9.1
+    commands:
+      - . .virtualenv/bin/activate
+      - black . --check
+      - isort --check-only .
+      - pylint src
+      - export PATH=$PATH:$(pwd)
+      - pytest --cov
+
+  - name: rebuild-cache
+    depends_on: [install-dependencies]
+    image: meltwater/drone-cache:dev
+    pull: true
+    settings:
+      backend: "filesystem"
+      rebuild: true
+      cache_key: '{{ .Repo.Name }}_{{ checksum "poetry.lock" }}'
+      archive_format: "gzip"
+      mount:
+        - '.virtualenv'
+    volumes:
+      - name: cache
+        path: /tmp/cache
