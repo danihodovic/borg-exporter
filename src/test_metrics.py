@@ -1,58 +1,63 @@
-import threading
+import requests
 import time
-
-import pytest
-from celery.contrib.testing.worker import start_worker
-
-
-@pytest.fixture
-def assert_exporter_metric_called(mocker, celery_app, celery_worker):
-    def fn(exporter, metric):
-        labels = mocker.patch.object(metric, "labels")
-        threading.Thread(target=exporter.run, args=(exporter.cfg,), daemon=True).start()
-
-        @celery_app.task
-        def slow_task():
-            time.sleep(6)
-
-        celery_worker.reload()
-        slow_task.apply_async()
-        time.sleep(4)
-        labels.assert_called_with(hostname=celery_worker.hostname)
-        labels.return_value.set.assert_any_call(1)
-
-    return fn
+from threading import Thread
+from prometheus_client import CollectorRegistry
+from .http_server import start_http_server
+import subprocess
 
 
-@pytest.mark.celery()
-def test_worker_tasks_active(exporter, assert_exporter_metric_called):
-    assert_exporter_metric_called(exporter, exporter.worker_tasks_active)
+
+def test_backups_total(tmpdir, find_free_port):
+    config = prepare(tmpdir)
+    subprocess.run(f"borgmatic -c {config} init -e repokey", shell=True, check=True)
+    subprocess.run(f"borgmatic -c {config}", shell=True, check=True)
 
 
-@pytest.mark.celery()
-def test_worker_heartbeat_status(exporter, assert_exporter_metric_called):
-    assert_exporter_metric_called(exporter, exporter.celery_worker_up)
+    registry = CollectorRegistry(auto_describe=True)
+    port = find_free_port()
+    start_http_server(config, registry, port)
+    time.sleep(1)
+    res = requests.get(f"http://localhost:{port}/metrics")
+    res.raise_for_status()
+
+    # Increase backup
+    # Get new value == 2
+    breakpoint()
 
 
-@pytest.mark.celery()
-def test_worker_status(exporter, celery_app):
-    threading.Thread(target=exporter.run, args=(exporter.cfg,), daemon=True).start()
-    time.sleep(5)
+def prepare(tmpdir):
+    backups_dir = tmpdir.mkdir("backups")
+    source_dir = tmpdir.mkdir("source_files")
+    source_dir.join("hello.txt").write("content")
 
-    with start_worker(celery_app, without_heartbeat=False) as celery_worker:
-        hostname = celery_worker.hostname
-        time.sleep(2)
-        assert (
-            exporter.registry.get_sample_value(
-                "celery_worker_up", labels={"hostname": hostname}
-            )
-            == 1.0
-        )
+    config = f"""
+location:
+  one_file_system: true
+  source_directories:
+    - {source_dir}
+  repositories:
+    - {backups_dir}
 
-    time.sleep(2)
-    assert (
-        exporter.registry.get_sample_value(
-            "celery_worker_up", labels={"hostname": hostname}
-        )
-        == 0.0
-    )
+storage:
+  archive_name_format: 'pytest'
+  encryption_passphrase: password
+
+retention:
+  prefix: 'prefix-'
+  keep_daily: 1
+
+consistency:
+  checks:
+    - repository
+    - archives
+hooks:
+  before_backup:
+    - echo "`date` - Starting backup"
+  after_backup:
+    - echo "`date` - Finished backup"
+
+  postgresql_databases: []
+"""
+    config_file = tmpdir.join("borgmatic.yml")
+    config_file.write(config)
+    return config_file

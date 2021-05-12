@@ -1,4 +1,5 @@
 from threading import Thread
+from .exporter import collect, create_metrics
 
 import kombu.exceptions
 from flask import Blueprint, Flask, current_app, request
@@ -17,10 +18,10 @@ def index():
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <title>celery-exporter</title>
+    <title>borg-exporter</title>
   </head>
   <body>
-    <h1>Celery Exporter</h1>
+    <h1>Borg Exporter</h1>
     <p><a href="/metrics">Metrics</a></p>
   </body>
 </html>
@@ -29,6 +30,9 @@ def index():
 
 @blueprint.route("/metrics")
 def metrics():
+    borgmatic_config = current_app.config["borgmatic_config"]
+    registry = current_app.config["registry"]
+    collect(borgmatic_config, registry)
     encoder, content_type = choose_encoder(request.headers.get("accept"))
     output = encoder(current_app.config["registry"])
     return output, 200, {"Content-Type": content_type}
@@ -50,10 +54,10 @@ def health():
     return f"Connected to the broker {conn.as_uri()}"
 
 
-def start_http_server(registry, celery_connection, port):
+def start_http_server(borgmatic_config, registry, port):
     app = Flask(__name__)
-    app.config["registry"] = registry
-    app.config["celery_connection"] = celery_connection
+    app.config["registry"] = create_metrics(registry)
+    app.config["borgmatic_config"] = borgmatic_config
     app.register_blueprint(blueprint)
     Thread(
         target=serve,
