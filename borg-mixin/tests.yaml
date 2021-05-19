@@ -12,7 +12,7 @@ tests:
         values: '0 0 0 0'
       # yamllint disable-line rule:line-length
       - series: 'borg_last_backup_timestamp{job="borg-db", instance="sample", repo="backup_successful"}'
-        values: '0 3600 7200 10800'
+        values: '0 86400 172800 259200'
     alert_rule_test:
       - eval_time: 0d
         alertname: BorgMissingBackup
