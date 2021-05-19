@@ -2,18 +2,19 @@
   prometheusAlerts+:: {
     groups+: [
       {
-        name: 'kubernetes-resources',
+        name: 'borg',
         rules: [
           {
-            alert: 'KubeNodeNotReady',
-            expr: 'kube_node_status_condition{condition="Ready",status="true"} == 0',
+            alert: 'BorgMissingBackup',
+            expr: 'time() - sum by (repo, instance) (borg_last_backup_timestamp{%(borgSelector)s}) > %(backupThreshold)s' % $._config,
             labels: {
               severity: 'warning',
             },
             annotations: {
-              summary: 'Node is not ready.',
+              summary: 'Borg missing backup.',
+              description: 'The instance {{ $labels.instance }} has not created a backup of the repo {{ $labels.repo }} in the last {{ $value }} seconds.',
             },
-            'for': '1h',
+            'for': '1m',
           },
         ],
       },
