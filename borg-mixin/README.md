@@ -1,6 +1,6 @@
-# Prometheus Monitoring Mixin for borg-mixin
+# Prometheus Monitoring Mixin for Borg
 
-A set of Grafana dashboards and Prometheus alerts for borg-mixin.
+A set of Grafana dashboards and Prometheus alerts for Borg.
 
 ## How to use
 
