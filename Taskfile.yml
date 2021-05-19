@@ -12,7 +12,7 @@ tasks:
 
   release:
     desc: Creates a Github release
-    deps: [build-binary]
+    deps: [build]
     cmds:
       - git tag --delete latest
       - git tag -a latest -m 'Latest build'
