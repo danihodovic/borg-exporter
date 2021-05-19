@@ -1,0 +1,33 @@
+---
+rule_files:
+  - prometheus-alerts.yaml
+
+evaluation_interval: 1d
+
+tests:
+  - interval: 1d
+    input_series:
+      # yamllint disable-line rule:line-length
+      - series: 'borg_last_backup_timestamp{job="borg-db", instance="sample", repo="backup_missing"}'
+        values: '0 0 0 0'
+      # yamllint disable-line rule:line-length
+      - series: 'borg_last_backup_timestamp{job="borg-db", instance="sample", repo="backup_successful"}'
+        values: '0 3600 7200 10800'
+    alert_rule_test:
+      - eval_time: 0d
+        alertname: BorgMissingBackup
+      - eval_time: 1d
+        alertname: BorgMissingBackup
+      - eval_time: 2d
+        alertname: BorgMissingBackup
+      - eval_time: 3d
+        alertname: BorgMissingBackup
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              repo: backup_missing
+              instance: sample
+            exp_annotations:
+              summary: 'Borg missing backup.'
+              # yamllint disable-line rule:line-length
+              description: 'The instance sample has not created a backup of the repo backup_missing in the last 259200 seconds.'
