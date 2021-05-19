@@ -4,6 +4,6 @@
     borgSelector: 'job="borg-db"',
 
     // Threshold for when the last backup was specified in seconds
-    backupThreshold: 3600,
+    backupThreshold: 3600 * 24,
   },
 }
