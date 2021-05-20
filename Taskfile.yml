@@ -6,9 +6,10 @@ tasks:
   build:
     desc: Creates a cross platform binary
     cmds:
-      - pyinstaller cli.py -y
-        --onefile
-        --name borg-exporter
+      - docker build . -t builder -f Dockerfile.pyinstaller --build-arg PYTHON_VERSION=$(cat .python-version)
+      - >
+        container=$(docker run --rm -d builder sleep 5) &&
+        docker cp $container:/app/dist/borg-exporter ./dist/borg-exporter
 
   release:
     desc: Creates a Github release
