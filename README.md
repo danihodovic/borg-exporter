@@ -1,5 +1,7 @@
 # borg-exporter [![Build Status](https://ci.depode.com/api/badges/danihodovic/borg-exporter/status.svg)](https://ci.depode.com/danihodovic/borg-exporter)
 
+![Dashboard](./images/borg_grafana_dashboard.png)
+
 A Prometheus exporter for [Borg](https://github.com/borgbackup/borg) backups.
 
 It provides the following metrics:
