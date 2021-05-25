@@ -2,7 +2,9 @@
 
 A set of Grafana dashboards and Prometheus alerts for Borg.
 
-## How to use
+You can find generated rules [here](./prometheus-alerts.yaml).
+
+## How generate the alert files
 
 This mixin is designed to be vendored into the repo with your infrastructure config.
 To do this, use [jsonnet-bundler](https://github.com/jsonnet-bundler/jsonnet-bundler):
