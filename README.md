@@ -23,3 +23,14 @@ chmod +x borg-exporter
 sudo mv ./borg-exporter /usr/local/bin/
 sudo borg-exporter enable-systemd
 ```
+
+## Alerting rules
+
+Alerting rules can be found [here](./borg-mixin/prometheus-alerts.yaml). By
+default Prometheus sends an alert if a backup hasn't been issued in 24h5m.
+
+## Grafana Dashboard
+
+You can find the generated Grafana dashboard [here](./borg-mixin/dashboards_out/dashboard.json) and it can be imported directly into the Grafana UI.
+
+It's also available in [Grafana's Dashboard Library](https://grafana.com/grafana/dashboards/14489).
