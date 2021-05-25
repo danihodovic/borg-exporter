@@ -38,11 +38,14 @@ steps:
 
   - name: install-borg
     image: python:3.9.1
+    environment:
+      GITHUB_TOKEN:
+        from_secret: GITHUB_TOKEN
     commands:
       - curl https://github.com/gruntwork-io/fetch/releases/download/v0.4.2/fetch_linux_amd64 -o ./fetch -L
       - chmod +x ./fetch
-      - ./fetch --repo https://github.com/borgbackup/borg --release-asset="borg-linux64" --tag=1.1.16 /tmp
-      - ./fetch --repo https://github.com/danihodovic/borgmatic-binary --release-asset='borgmatic' --tag 1.5.13 /tmp
+      - ./fetch --github-oauth-token=$GITHUB_TOKEN --repo https://github.com/borgbackup/borg --release-asset="borg-linux64" --tag=1.1.16 /tmp
+      - ./fetch --github-oauth-token=$GITHUB_TOKEN --repo https://github.com/danihodovic/borgmatic-binary --release-asset='borgmatic' --tag 1.5.13 /tmp
       - mv /tmp/borg-linux64 borg
       - mv /tmp/borgmatic borgmatic
       - chmod +x borg borgmatic
