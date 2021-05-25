@@ -4,6 +4,10 @@ A set of Grafana dashboards and Prometheus alerts for Borg.
 
 You can find generated rules [here](./prometheus-alerts.yaml).
 
+You can find the generated Grafana dashboard [here](./dashboards_out/dashboard.json) and it can be imported directly into the Grafana UI.
+
+It's also available in [Grafana's Dashboard Library](https://grafana.com/grafana/dashboards/14489).
+
 ## How generate the alert files
 
 This mixin is designed to be vendored into the repo with your infrastructure config.
