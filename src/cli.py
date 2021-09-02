@@ -19,6 +19,7 @@ def config_opt(func):
         "--config",
         default="/etc/borgmatic/config.yaml",
         help="The path to the borgmatic config file",
+        multiple=True,
         type=click.Path(
             exists=True,
             file_okay=True,

@@ -1,3 +1,4 @@
+from py._path.local import LocalPath
 from flask import Blueprint, Flask, current_app, request
 from loguru import logger
 from prometheus_client.exposition import choose_encoder
@@ -36,10 +37,12 @@ def metrics():
     return output, 200, {"Content-Type": content_type}
 
 
-def start_http_server(borgmatic_config, registry, port):
+def start_http_server(borgmatic_configs, registry, port):
+    if isinstance(borgmatic_configs, str):
+        borgmatic_configs = (borgmatic_configs,)
     app = Flask(__name__)
     app.config["registry"] = create_metrics(registry)
-    app.config["borgmatic_config"] = borgmatic_config
+    app.config["borgmatic_config"] = borgmatic_configs
     app.register_blueprint(blueprint)
     logger.info("Started borg-exporter at port='{}'", port)
     serve(app, host="0.0.0.0", port=port, _quiet=True)
