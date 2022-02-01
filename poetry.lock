@@ -752,7 +752,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "staticx"
-version = "0.12.2"
+version = "0.13.6"
 description = "Build static self-extracting app from dynamic executable"
 category = "dev"
 optional = false
@@ -876,7 +876,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "fc5ff144eee6bd6d395e8a580c9a823d9b328fe204358590662495a185fa94e3"
+content-hash = "7b17890393578f5dc6c7371619cc90e1c35887bac86363b8ec3b0d097c1cc589"
 
 [metadata.files]
 altgraph = [
@@ -1325,8 +1325,8 @@ six = [
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
 ]
 staticx = [
-    {file = "staticx-0.12.2-py3-none-manylinux1_x86_64.whl", hash = "sha256:23361f03bd0e8d0734c9a1e32c2d0dfa7da591188f7d3ecad479d44c1186d5ac"},
-    {file = "staticx-0.12.2.tar.gz", hash = "sha256:e38c940277a983b2f0c4a13ba8c8a5b151e0a384aa939280a14b9eadb237f584"},
+    {file = "staticx-0.13.6-py3-none-manylinux1_x86_64.whl", hash = "sha256:c3e91cf71bd6aa86b1ab558bc464cdbc255bfff667f927f995a83bee3b18df70"},
+    {file = "staticx-0.13.6.tar.gz", hash = "sha256:34a88480766416774cc70f6c2a192e2c1702ba5cfd3415f50e6358504bce7c85"},
 ]
 timy = [
     {file = "timy-0.4.2-py3-none-any.whl", hash = "sha256:afd090509248dc638cd46e29a1d721ed8a079175269f5961eab576a429495b2e"},
