@@ -11,6 +11,18 @@ Name     | Description | Type
 borg_backups_total | Total number of Borg backups | Gauge
 borg_last_backup_timestamp | Timestamp of the last backup | Gauge
 
+## Requirements
+
+borg-exporter makes use of **borgmatic** (https://github.com/witten/borgmatic) to fetch the state of backups.
+
+The two mostly used options to install borgmatic
+* From your distro's package manager
+* Statically compiled python binary: https://github.com/danihodovic/borgmatic-binary
+
+Also, the exporter assumes that borgmatic is already configured and enabled.
+
+Refer to the official borgmatic [documentation](https://github.com/borgmatic-collective/borgmatic)
+
 ## Installation
 
 Borg exporter runs as a Python binary managed by Systemd. It provides a command
