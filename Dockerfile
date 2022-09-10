@@ -1,17 +1,20 @@
-FROM danihodovic/pyinstaller-builder:latest
+FROM python:alpine AS builder
 
-ARG PYTHON_VERSION=3.9.2
+RUN apk update && apk add \
+    alpine-sdk openssl-dev libffi-dev python3-dev cargo
 
-RUN pyenv install $PYTHON_VERSION && pyenv global $PYTHON_VERSION
+ENV POETRY_VIRTUALENVS_CREATE=false
 
 RUN pip install poetry
 
 WORKDIR /app/
-
 COPY ./pyproject.toml ./poetry.lock /app/
-
 RUN poetry install --only main
-
 COPY . /app/
 
-RUN eval "$(pyenv init -)" && pyinstaller pyinstaller.spec
+RUN pyinstaller pyinstaller.spec
+
+FROM b3vis/borgmatic:latest
+COPY --from=builder /app/dist/borg-exporter /bin/borg-exporter
+
+ENTRYPOINT ["borg-exporter", "run"]
