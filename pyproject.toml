@@ -14,17 +14,18 @@ description = ""
 authors = ["Dani Hodovic <dani.hodovic@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.11"
 prometheus-client = "^0.13.1"
-click = "^7.1.2"
+click = "8.0"
 pretty-errors = "^1.2.19"
 loguru = "^0.5.3"
-Flask = "^1.1.2"
+Flask = "2.1.0"
 waitress = "^2.0.0"
 arrow = "^1.1.0"
 timy = "^0.4.2"
-pyinstaller = "v4.0"
+pyinstaller = "^5.4"
 py = "^1.11.0"
+Jinja2 = "^3.1.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"
