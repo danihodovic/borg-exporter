@@ -17,7 +17,7 @@ def config_opt(func):
     return click.option(
         "-c",
         "--config",
-        default="/etc/borgmatic/config.yaml",
+        default=["/etc/borgmatic/config.yaml"],
         help="The path to the borgmatic config file",
         multiple=True,
         type=click.Path(
