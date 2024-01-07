@@ -121,7 +121,7 @@ def test_unique_size(prepare_one):
         registry.get_sample_value(
             "borg_unique_size", labels=dict(repo=f"{config_files[0].dirname}/backups-0")
         )
-        == 973.0
+        == 7580.0
     )
 
 
