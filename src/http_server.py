@@ -1,4 +1,3 @@
-from py._path.local import LocalPath
 from flask import Blueprint, Flask, current_app, request
 from loguru import logger
 from prometheus_client.exposition import choose_encoder

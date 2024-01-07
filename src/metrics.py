@@ -6,6 +6,7 @@ import arrow
 import timy
 from prometheus_client import Gauge
 
+
 def create_metrics(registry):
     Gauge(
         "borg_backups_total",
